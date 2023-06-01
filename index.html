@@ -144,7 +144,7 @@ h3,p  { margin: 0; margin-bottom: 16px;}
 
 <script>
 let ROLES = null;
-fetch("/roles.json").then(data => data.text()).then(data => {
+fetch("roles.json").then(data => data.text()).then(data => {
     ROLES = JSON.parse(data);
     change();
 })
