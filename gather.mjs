@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 let roles = {};
 
 function sanitize(name) {
-    return name.toLowerCase().replace(/(\s|_|-)/g, "");
+    return name.toLowerCase().replace(/(\s|'|_|-)/g, "");
 }
 
 Promise.all(

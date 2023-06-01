@@ -1,8 +1,7 @@
 <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&display=swap" rel="stylesheet"> 
-    <title>Teensy Character List Generator</title>    
+    <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Roboto&family=Roboto+Slab:wght@400;500;700&display=swap" rel="stylesheet">     <title>Teensy Character List Generator</title>    
 </head>
 
 <style>
@@ -25,20 +24,20 @@ main {
     height: 100vh; width: 77vh;
     margin: auto; }
 #title {
-    font-family: 'Arvo', sans-serif;
+    font-family: 'Roboto Slab', sans-serif;
     padding: 0 4vh;
     font-size: 2.5vh;
     font-weight: bold;
-    padding-top: 3vh; }
+    padding-top: 2vh; }
 #author {
-    font-family: 'Arvo', sans-serif;
+    font-family: 'Roboto Slab', sans-serif;
     text-align: center;
     font-size: 2vh;
     display: none;
 }
 
 .label {
-    font-family: 'Comfortaa', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 1.5vh;
     padding: 0 4vh;
     color: #555;
@@ -48,12 +47,14 @@ main {
 }
 
 #characters {
+    margin-top: -2vh;
     padding: 2vh 0;
 }
 .character-type {
     display: grid;
     grid-template-columns: 1fr 1fr;
     padding: 0 2vh;
+    padding-bottom: 0.25vh;
 }
 .character-type > div {
     display: grid;
@@ -71,15 +72,15 @@ img {
     grid-row: 1 / span 2;
     width: 6vh;
     padding-right: 1vh;
-    margin-top: 0.75vh;
+    margin-top: 1vh;
 }
 .name {
-    font-size: 1.5vh;
+    font-size: 1.6vh;
     font-weight: bold;
-    font-family: 'Arvo', sans-serif; }
+    font-family: 'Roboto Slab', sans-serif; }
 .ability {
-    font-size: 1.25vh;
-    font-family: 'Arvo', sans-serif; }
+    font-size: 1.5vh;
+    font-family: 'Roboto', sans-serif; }
 
 @media print {
     body * {
@@ -194,7 +195,7 @@ function change() {
             } else {
                 let elem = document.createElement("div");
                 let img = document.createElement("img");
-                let obj = ROLES[item.id.toLowerCase().replace(/(_|-|\s)/g, "")];
+                let obj = ROLES[item.id.toLowerCase().replace(/(_|'|-|\s)/g, "")];
                 
                 img.src = obj.icon;
                 let name = document.createElement("div");
