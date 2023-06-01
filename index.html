@@ -128,17 +128,17 @@ h3,p  { margin: 0; margin-bottom: 16px;}
         <div id="title"></div>
         <div id="author"></div>
         <div id="characters">
-            <div class="label">Townsfolk</div>
+            <div class="label" id="label-townsfolk">Townsfolk</div>
             <div class="character-type" id="characters-townsfolk"></div>
-            <div class="label">Outsiders</div>
+            <div class="label" id="label-outsider">Outsiders</div>
             <div class="character-type" id="characters-outsider"></div>
-            <div class="label">Minions</div>
+            <div class="label" id="label-minion">Minions</div>
             <div class="character-type" id="characters-minion"></div>
-            <div class="label">Demons</div>
+            <div class="label" id="label-demon">Demons</div>
             <div class="character-type" id="characters-demon"></div>
         </div>
         <footer id="fabled-container">
-            <div class="label">Fabled</div>
+            <div class="label" id="label-fabled">Fabled</div>
             <div class="character-type" id="characters-fabled"></div>
         </footer>
     </div>    
@@ -163,7 +163,13 @@ const Elems = {
         demon: document.getElementById("characters-demon"),
         fabled: document.getElementById("characters-fabled"),
     },
-    fabledContainer: document.getElementById("fabled-container")
+    labels: {
+        townsfolk: document.getElementById("label-townsfolk"),
+        outsider: document.getElementById("label-outsider"),
+        minion: document.getElementById("label-minion"),
+        demon: document.getElementById("label-demon"),
+        fabled: document.getElementById("label-fabled"),
+    }
 }
     
 const upload = document.getElementById("upload");
@@ -172,9 +178,9 @@ function change() {
     Elems.title.innerHTML = "";
     Elems.author.innerHTML = "";
     for (let type in Elems.characters) {
+        Elems.labels[type].style.display = "none";
         Elems.characters[type].innerHTML = "";
     }
-    Elems.fabledContainer.style.display = "none";
 
     const file = upload.files[0];
     const reader = new FileReader();
@@ -200,10 +206,10 @@ function change() {
                 description.textContent = obj.ability;
 
                 elem.append(img, name, description);
-                if (obj.type in Elems.characters)
+                if (obj.type in Elems.characters) {
+                    Elems.labels[obj.type].style.display = "block";
                     Elems.characters[obj.type].append(elem);
-                if (obj.type == "fabled")
-                    Elems.fabledContainer.style.display = "block";
+                }
             }
         }
     })
