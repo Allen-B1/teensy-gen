@@ -1,0 +1,213 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&display=swap" rel="stylesheet"> 
+
+<style>
+body {
+    font-family: sans-serif;
+    padding: 0; margin: 0;
+
+    display: flex; flex-direction: row; }
+main {
+    flex-grow: 1;
+    padding: 32px; }
+.main {
+    max-width: 512px;
+    margin: auto;
+}
+
+#target {
+    position: relative;
+    outline: 2px solid black;
+    height: 100vh; width: 77vh;
+    margin: auto; }
+#title {
+    font-family: 'Arvo', sans-serif;
+    padding: 0 4vh;
+    font-size: 2.5vh;
+    font-weight: bold;
+    padding-top: 3vh; }
+#author {
+    font-family: 'Arvo', sans-serif;
+    text-align: center;
+    font-size: 2vh;
+    display: none;
+}
+
+.label {
+    font-family: 'Comfortaa', sans-serif;
+    font-size: 1.5vh;
+    padding: 0 4vh;
+    color: #555;
+    text-transform: uppercase;
+    border-bottom: 0.25vh solid #aaa;
+    text-align: right;
+}
+
+#characters {
+    padding: 2vh 0;
+}
+.character-type {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2vh;
+}
+.character-type > div {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 5vh;
+
+    padding: 1vh;
+}
+footer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+}
+
+img {
+    grid-row: 1 / span 2;
+    width: 6vh;
+    padding-right: 1vh;
+    margin-top: 0.75vh;
+}
+.name {
+    font-size: 1.5vh;
+    font-weight: bold;
+    font-family: 'Arvo', sans-serif; }
+.ability {
+    font-size: 1.25vh;
+    font-family: 'Arvo', sans-serif; }
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #target, #target * {
+        visibility: visible;
+    }
+    #target {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        width: 100%; height: 100%;
+    }
+}
+@page {
+    size: auto;
+    margin: 0mm;
+}
+
+button, ::file-selector-button {
+    border: 0; font-family: sans-serif;
+    background: hsl(300, 50%, 50%);
+    color: #fff;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+button:active, ::file-selector-button:active {
+    background: hsl(300, 50%, 40%);
+
+}
+h3,p  { margin: 0; margin-bottom: 16px;}
+</style>
+
+<body>
+    <main>
+        <div class="main">
+            <h3>Teensy Character List</h3>
+            <p>Use the file input below to upload your script JSONs.</p>
+            <div>
+                <input type="file" id="upload"> 
+                <button style="float:right" id="print">Generate PDF</button>    
+            </div>
+        </div>
+    </main>
+    <div id="target">
+        <div id="title"></div>
+        <div id="author"></div>
+        <div id="characters">
+            <div class="label">Townsfolk</div>
+            <div class="character-type" id="characters-townsfolk"></div>
+            <div class="label">Outsiders</div>
+            <div class="character-type" id="characters-outsider"></div>
+            <div class="label">Minions</div>
+            <div class="character-type" id="characters-minion"></div>
+            <div class="label">Demons</div>
+            <div class="character-type" id="characters-demon"></div>
+        </div>
+        <footer id="fabled-container">
+            <div class="label">Fabled</div>
+            <div class="character-type" id="characters-fabled"></div>
+        </footer>
+    </div>    
+</body>
+
+
+<script>
+let ROLES = null;
+fetch("/roles.json").then(data => data.text()).then(data => {
+    ROLES = JSON.parse(data);
+    change();
+})
+
+const Elems = {
+    title: document.getElementById("title"),
+    author: document.getElementById("author"),
+
+    characters: {
+        townsfolk: document.getElementById("characters-townsfolk"),
+        outsider: document.getElementById("characters-outsider"),
+        minion: document.getElementById("characters-minion"),
+        demon: document.getElementById("characters-demon"),
+        fabled: document.getElementById("characters-fabled"),
+    },
+    fabledContainer: document.getElementById("fabled-container")
+}
+    
+const upload = document.getElementById("upload");
+upload.addEventListener("change", change);
+function change() {
+    Elems.title.innerHTML = "";
+    Elems.author.innerHTML = "";
+    for (let type in Elems.characters) {
+        Elems.characters[type].innerHTML = "";
+    }
+    Elems.fabledContainer.style.display = "none";
+
+    const file = upload.files[0];
+    const reader = new FileReader();
+    reader.addEventListener("load", (evt) => {
+        console.log(evt.target.result);
+        let result = JSON.parse(evt.target.result);
+        for (let item of result) {
+            if (item.id == "_meta") {
+                Elems.title.textContent = item.name;
+                Elems.author.textContent = item.author;
+            } else {
+                let elem = document.createElement("div");
+                let img = document.createElement("img");
+                let obj = ROLES[item.id.toLowerCase().replace(/(_|-|\s)/g, "")];
+                
+                img.src = obj.icon;
+                let name = document.createElement("div");
+                name.classList.add("name");
+                name.textContent = obj.name;
+
+                let description = document.createElement("div");
+                description.classList.add("ability");
+                description.textContent = obj.ability;
+
+                elem.append(img, name, description);
+                if (obj.type in Elems.characters)
+                    Elems.characters[obj.type].append(elem);
+                if (obj.type == "fabled")
+                    Elems.fabledContainer.style.display = "block";
+            }
+        }
+    })
+    reader.readAsText(file);
+}
+
+document.getElementById("print").addEventListener("click", () => {
+    window.print();
+});
+</script>
